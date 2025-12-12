@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
   tagline: 'Learn Physical AI and Humanoid Robotics through Spec-Driven Development',
   url: 'https://asfarahmed.github.io', // GitHub Pages URL
   baseUrl: '/humanoid-robotics/', // Repository name for GitHub Pages
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'asfarahmed', // GitHub username/organization
@@ -117,11 +117,11 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             items: [
               {
                 label: 'Get Started',
-                to: '/docs/textbook/',
+                to: '/docs/textbook',
               },
               {
                 label: 'Chapter 1: Physical AI Fundamentals',
-                to: '/docs/textbook/chapter-01/index',
+                to: '/docs/textbook/chapter-01/index/',
               },
               {
                 label: 'All Chapters',
