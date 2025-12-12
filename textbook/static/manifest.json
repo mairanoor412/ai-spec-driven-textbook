@@ -1,0 +1,18 @@
+{
+  "short_name": "AI/Robotic Textbook",
+  "name": "AI/Spec-Driven Textbook for Physical AI & Humanoid Robotics",
+  "description": "Learn Physical AI and Humanoid Robotics through Spec-Driven Development",
+  "icons": [
+    {
+      "src": "/img/robotics-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "orientation": "portrait"
+}

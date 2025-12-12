@@ -1,0 +1,51 @@
+.printHeader {
+  display: none; /* Only visible when printing */
+}
+
+@media print {
+  .printHeader {
+    display: block;
+    margin-bottom: 20mm; /* 20mm spacing */
+    border-bottom: 2px solid #2E8B57;
+    padding-bottom: 10mm;
+  }
+
+  .mainTitle {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 24pt !important;
+    color: #000 !important;
+    margin: 0 !important;
+    text-align: center;
+    line-height: 1.3 !important;
+  }
+
+  .subtitle {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 16pt !important;
+    color: #000 !important;
+    margin: 10pt 0 0 0 !important;
+    text-align: center;
+    line-height: 1.3 !important;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 15pt 0;
+  }
+
+  .printInfo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt !important;
+    margin-top: 5mm;
+    color: #666;
+  }
+
+  .copyright {
+    margin-top: 10mm;
+    text-align: center;
+    font-size: 9pt !important;
+    color: #666;
+  }
+}

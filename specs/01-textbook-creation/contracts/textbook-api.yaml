@@ -1,0 +1,222 @@
+# Textbook Content API Contract
+
+**Version**: 1.0.0
+**Date**: 2025-12-09
+**Feature**: 01-textbook-creation
+
+## Overview
+
+This contract defines the API for textbook content generation and management. Since this is primarily a static Docusaurus site, the API focuses on content generation, validation, and build processes.
+
+## Content Generation API
+
+### POST /api/generate/chapter
+
+Generate a new textbook chapter based on specifications.
+
+**Request**:
+```json
+{
+  "specId": "string",
+  "moduleId": "string",
+  "chapterTitle": "string",
+  "learningOutcomes": ["string"],
+  "targetAudience": "beginner|intermediate|advanced",
+  "wordCount": "3000-5000",
+  "includeExamples": "boolean",
+  "includeExercises": "boolean",
+  "includeDiagrams": "boolean"
+}
+```
+
+**Response** (201 Created):
+```json
+{
+  "chapterId": "string",
+  "status": "draft|review|approved|published",
+  "content": {
+    "overview": "string",
+    "concepts": "string",
+    "examples": "string",
+    "code": "string",
+    "exercises": "string"
+  },
+  "validationStatus": "unverified|in-review|verified|flagged",
+  "createdAt": "timestamp",
+  "updatedAt": "timestamp"
+}
+```
+
+### GET /api/chapters/{chapterId}
+
+Retrieve a specific chapter.
+
+**Response** (200 OK):
+```json
+{
+  "id": "string",
+  "title": "string",
+  "moduleId": "string",
+  "learningOutcomes": ["string"],
+  "content": {
+    "overview": "string",
+    "concepts": "string",
+    "examples": "string",
+    "code": "string",
+    "exercises": "string"
+  },
+  "metadata": {
+    "wordCount": "number",
+    "estimatedReadingTime": "string",
+    "difficulty": "beginner|intermediate|advanced",
+    "prerequisites": ["string"]
+  },
+  "status": "draft|review|approved|published",
+  "validationStatus": "unverified|in-review|verified|flagged",
+  "relatedChapters": ["string"],
+  "createdAt": "timestamp",
+  "updatedAt": "timestamp"
+}
+```
+
+### PUT /api/chapters/{chapterId}/validate
+
+Submit a chapter for technical accuracy validation.
+
+**Request**:
+```json
+{
+  "validatorId": "string",
+  "validationNotes": "string",
+  "approved": "boolean"
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "chapterId": "string",
+  "validationStatus": "verified|flagged",
+  "validationNotes": "string",
+  "validatedBy": "string",
+  "validatedAt": "timestamp"
+}
+```
+
+### GET /api/modules/{moduleId}/chapters
+
+List all chapters in a module.
+
+**Response** (200 OK):
+```json
+{
+  "moduleId": "string",
+  "chapters": [
+    {
+      "id": "string",
+      "title": "string",
+      "status": "draft|review|approved|published",
+      "wordCount": "number",
+      "estimatedReadingTime": "string",
+      "difficulty": "beginner|intermediate|advanced"
+    }
+  ]
+}
+```
+
+## Content Validation API
+
+### POST /api/validate/content
+
+Validate content for technical accuracy.
+
+**Request**:
+```json
+{
+  "contentType": "chapter|section|example|exercise",
+  "content": "string",
+  "topic": "string",
+  "targetAudience": "beginner|intermediate|advanced"
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "valid": "boolean",
+  "issues": [
+    {
+      "type": "technical-inaccuracy|clarity|complexity",
+      "description": "string",
+      "severity": "low|medium|high|critical",
+      "suggestions": ["string"]
+    }
+  ],
+  "confidence": "0-100"
+}
+```
+
+## Build API
+
+### POST /api/build
+
+Trigger a build of the textbook site.
+
+**Request**:
+```json
+{
+  "target": "preview|production",
+  "validateContent": "boolean"
+}
+```
+
+**Response** (202 Accepted):
+```json
+{
+  "buildId": "string",
+  "status": "queued|building|success|failed",
+  "startedAt": "timestamp",
+  "estimatedCompletion": "timestamp"
+}
+```
+
+### GET /api/build/{buildId}
+
+Get status of a build.
+
+**Response** (200 OK):
+```json
+{
+  "buildId": "string",
+  "status": "queued|building|success|failed",
+  "startedAt": "timestamp",
+  "completedAt": "timestamp",
+  "logs": "string",
+  "artifacts": {
+    "siteUrl": "string",
+    "size": "number"
+  }
+}
+```
+
+## Error Responses
+
+All API endpoints follow standard error response format:
+
+```json
+{
+  "error": {
+    "code": "string",
+    "message": "string",
+    "details": "object"
+  }
+}
+```
+
+Common error codes:
+- `400`: Invalid request format
+- `401`: Unauthorized access
+- `403`: Forbidden action
+- `404`: Resource not found
+- `422`: Validation error
+- `500`: Internal server error
