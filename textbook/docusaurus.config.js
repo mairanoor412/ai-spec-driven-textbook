@@ -6,13 +6,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 (module.exports = {
   title: 'AI/Spec-Driven Textbook for Physical AI & Humanoid Robotics',
   tagline: 'Learn Physical AI and Humanoid Robotics through Spec-Driven Development',
-  url: 'https://asfarahmed.github.io', // GitHub Pages URL
-  baseUrl: '/humanoid-robotics/', // Repository name for GitHub Pages
+  url: 'https://mairanoor412.github.io', // GitHub Pages URL
+  baseUrl: '/ai-spec-driven-textbook/', // Repository name for GitHub Pages
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'asfarahmed', // GitHub username/organization
-  projectName: 'humanoid-robotics', // GitHub repository name
+  organizationName: 'mairanoor412', // GitHub username/organization
+  projectName: 'ai-spec-driven-textbook', // GitHub repository name
 
   presets: [
     [
