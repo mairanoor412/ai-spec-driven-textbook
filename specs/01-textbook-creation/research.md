@@ -106,3 +106,134 @@
 - Write each chapter using SpecKit while refining the overall plan
 - Validate each chapter before moving to the next
 - Update plan based on learnings from completed chapters
+
+## Environment Upgrade Research
+
+### Decision: Docusaurus Version Upgrade Path (2.0.0-beta.6 → 3.x)
+
+**Rationale**: The current Docusaurus 2.0.0-beta.6 is a legacy beta version that lacks stability, security updates, and modern features. Upgrading to Docusaurus 3.x provides:
+- Production-ready stability with long-term support
+- Improved performance and build times
+- Better TypeScript support and type safety
+- Enhanced MDX v3 capabilities
+- Active maintenance and security updates
+- React 18 compatibility with modern features (automatic batching, concurrent rendering)
+
+**Migration Strategy**:
+- Follow official Docusaurus v2 to v3 migration guide
+- Incremental upgrade approach: dependencies → configuration → plugins → validation
+- Preserve all existing content without modification (infrastructure-only upgrade)
+
+**Alternatives Considered**:
+- Stay on 2.0.0-beta.6: Rejected due to lack of stability, security updates, and modern features
+- Skip to Docusaurus 4.x (if available): Rejected as 3.x is current stable version with proven migration path
+- Switch to alternative SSG (VitePress, Nextra): Rejected to maintain existing Docusaurus investment and content structure
+
+### Decision: React Version Upgrade (17 → 18)
+
+**Rationale**: React 18 is required for Docusaurus 3.x compatibility and provides:
+- Automatic batching for better performance
+- Concurrent features for improved user experience
+- Improved server-side rendering capabilities
+- Streaming SSR support
+- Required for Docusaurus 3.x peer dependencies
+
+**Migration Approach**:
+- Upgrade as part of Docusaurus upgrade (bundled dependency)
+- No code changes required for Docusaurus usage (handled by framework)
+- Test existing components for compatibility
+
+**Alternatives Considered**:
+- Stay on React 17: Not viable due to Docusaurus 3.x requirement
+- Upgrade to React 19: Rejected as Docusaurus 3.x currently targets React 18
+
+### Decision: Node.js Version Requirement (18.0+)
+
+**Rationale**: Node.js 18.0+ is required for Docusaurus 3.x and provides:
+- Native Fetch API support
+- Improved performance and security
+- Long-term support (LTS) version
+- Better ES modules support
+- Required for Docusaurus 3.x build process
+
+**Implementation**:
+- Update development environment to Node.js 18.x or 20.x LTS
+- Update CI/CD pipeline Node.js version
+- Update GitHub Actions workflows if applicable
+- Document Node.js version requirement in project README
+
+**Alternatives Considered**:
+- Node.js 16: End of life, incompatible with Docusaurus 3.x
+- Node.js 21+: Cutting edge but not LTS, potentially unstable
+
+### Decision: Search Plugin Selection for Docusaurus 3.x
+
+**Rationale**: Search functionality is critical for textbook navigation (per spec FR-009). Must support full-text search with result highlighting and ranking.
+
+**Options Evaluated**:
+
+1. **Algolia DocSearch** (`@docusaurus/theme-search-algolia`)
+   - Pros: Official Docusaurus integration, powerful search, free for open source
+   - Cons: Requires external service, approval process for free tier
+   - Best for: Public documentation with high traffic
+
+2. **Local Search Plugin** (`@easyops-cn/docusaurus-search-local`)
+   - Pros: No external dependencies, works offline, instant setup, free
+   - Cons: Less powerful than Algolia, larger bundle size
+   - Best for: Small to medium documentation, privacy-sensitive content
+
+3. **Lunr.js Plugin** (`docusaurus-lunr-search`)
+   - Pros: Client-side search, no external service
+   - Cons: Performance issues with large sites, less maintained
+   - Best for: Small sites only
+
+**Recommended Decision**: Start with **Local Search Plugin** for immediate functionality, with option to migrate to Algolia if search quality/performance becomes an issue.
+
+**Rationale for Local Search**:
+- Zero setup time (no approval process)
+- Privacy-friendly (no external service)
+- Sufficient for 4-chapter textbook
+- Can migrate to Algolia later if needed without content changes
+
+### Decision: Content Preservation Strategy
+
+**Rationale**: All existing MD/MDX content must remain unchanged during upgrade to prevent introduction of errors or loss of carefully crafted educational material.
+
+**Implementation**:
+- Git commit checkpoint before upgrade begins
+- Automated validation: compare content file checksums pre/post upgrade
+- No manual editing of content files during upgrade
+- All changes limited to configuration and dependency files
+- Comprehensive regression testing after upgrade
+
+**Validation Checklist**:
+- All 4 chapters render without errors
+- Navigation (breadcrumbs, sidebar, next/previous) works correctly
+- Search functionality operates with highlighting
+- Visual materials (images, diagrams) load properly
+- Code examples render with correct syntax highlighting
+- Deployment to GitHub Pages succeeds
+- Build completes with zero errors or warnings
+
+### Decision: Rollback and Risk Mitigation
+
+**Rationale**: Minimize risk of upgrade failure by having clear rollback plan and incremental validation.
+
+**Rollback Strategy**:
+- All upgrade changes in single Git commit for easy revert
+- Document pre-upgrade package versions
+- Keep separate upgrade branch until fully validated
+- Merge to main only after complete validation passes
+
+**Risk Mitigation Measures**:
+- Test upgrade in local development environment first
+- Run full build validation before deployment
+- Deploy to test/staging environment before production
+- Keep backup of working state
+- Document all configuration changes for troubleshooting
+
+**Known Risks**:
+1. Breaking changes in Docusaurus 3.x API → Mitigation: Follow migration guide, test incrementally
+2. Search plugin incompatibility → Mitigation: Research compatible plugins before upgrade, have fallback options
+3. MDX syntax changes → Mitigation: Validate builds immediately, fix compatibility issues
+4. GitHub Pages deployment config changes → Mitigation: Review v3 deployment docs, test in staging

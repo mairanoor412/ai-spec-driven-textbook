@@ -212,3 +212,68 @@ A student wants to understand complex concepts through diagrams, visuals, and ot
 - **SC-006**: Content maintains technical accuracy with all technical claims verified through subject matter expert review and documented approval for each chapter
 - **SC-007**: Textbook is fully compatible with Spec-Kit Plus workflows for generation and maintenance
 - **SC-008**: Each chapter is modular and maintainable, allowing for independent updates and improvements
+
+## Environment & Version Requirements *(mandatory)*
+
+This section defines the technical environment and version upgrade requirements necessary for the textbook platform to function optimally and remain maintainable.
+
+### Version Upgrade Requirements
+
+- **ENV-001**: Docusaurus MUST be upgraded from version 2.0.0-beta.6 to the latest stable 3.x release
+  - **Rationale**: Docusaurus 3.x provides improved performance, better TypeScript support, enhanced MDX capabilities, and long-term stability with active maintenance
+  - **Scope**: Upgrade includes core Docusaurus packages and all official plugins
+
+- **ENV-002**: React MUST be upgraded from version 17 to version 18
+  - **Rationale**: React 18 is required for Docusaurus 3.x compatibility and provides automatic batching, concurrent features, and improved performance
+  - **Scope**: Upgrade includes React core library and React DOM
+
+- **ENV-003**: Node.js version MUST be compatible with Docusaurus 3.x requirements
+  - **Rationale**: Docusaurus 3.x requires Node.js 18.0 or higher for optimal functionality and security updates
+  - **Scope**: Development environment and deployment pipeline must use Node.js 18.0+
+
+### Content Preservation Requirements
+
+- **ENV-004**: Existing MD/MDX textbook content MUST remain unchanged during the upgrade process
+  - **Rationale**: The upgrade is infrastructure-only and must not alter educational content, maintain content integrity, and preserve all learning materials
+  - **Scope**: All files in the `/docs` directory and any related content directories must be preserved byte-for-byte
+
+- **ENV-005**: No content regeneration is allowed during the upgrade
+  - **Rationale**: Regenerating content risks introducing errors, inconsistencies, or loss of carefully crafted educational material
+  - **Scope**: Applies to all chapters, examples, exercises, and visual materials
+
+### Plugin and Feature Requirements
+
+- **ENV-006**: Search plugin MUST be re-enabled after the upgrade
+  - **Rationale**: Full-text search is a critical feature (FR-009) for student navigation and content discovery
+  - **Scope**: Install and configure the appropriate Docusaurus 3.x-compatible search plugin (e.g., `@docusaurus/theme-search-algolia` or local search plugin)
+
+### Upgrade Scope Constraints
+
+- **ENV-007**: Upgrade must be limited to configuration, dependencies, and plugins only
+  - **Rationale**: Minimize risk and ensure changes are reversible if issues arise
+  - **Scope**: Permitted changes include:
+    - `package.json` dependency versions
+    - `docusaurus.config.js` configuration syntax updates
+    - Plugin installation and configuration
+    - Build scripts and deployment configuration
+  - **Out of Scope**: Any modifications to:
+    - Chapter content (MD/MDX files)
+    - Visual materials and diagrams
+    - Code examples within chapters
+    - Exercise definitions
+
+### Validation Requirements
+
+- **ENV-008**: Post-upgrade validation MUST confirm all existing functionality remains operational
+  - **Test Cases**:
+    - All 4 chapters render correctly without errors
+    - Navigation (breadcrumbs, next/previous, table of contents) functions as expected
+    - Search capabilities work with result highlighting
+    - Visual materials load and display properly
+    - Code examples render with proper syntax highlighting
+    - Deployment to GitHub Pages succeeds without errors
+  - **Acceptance Criteria**: Zero regressions in user-facing functionality
+
+- **ENV-009**: Build process MUST complete successfully with no warnings or errors
+  - **Rationale**: Clean builds ensure production readiness and maintainability
+  - **Validation**: Run `npm run build` and verify exit code 0 with no error messages

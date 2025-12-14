@@ -257,6 +257,121 @@ This document contains implementation tasks for creating a modular, highly struc
 - Each chapter review task depends on its respective content creation tasks
 - **T087-T093** (Edge cases) depend on chapter content being created
 - **T094-T106** (Polish) depend on all chapters being complete
+- **T107-T162** (Environment Upgrade) can be executed independently after Phase 11 (Polish) or run in parallel with content development
+  - T107-T112 (Pre-Audit) must complete before T113 (Dependency Upgrade)
+  - T113-T119 (Dependency Upgrade) must complete before T120 (Configuration Migration)
+  - T120-T126 (Configuration Migration) must complete before T127 (Search Plugin)
+  - T127-T132 (Search Plugin) must complete before T133 (Build Validation)
+  - T133-T141 (Build Validation) must complete before T142 (Content Validation)
+  - T142-T147 (Content Validation) must complete before T148 (Deployment)
+  - T148-T155 (Deployment Validation) must complete before T156 (Documentation)
+  - T156-T162 (Documentation) are final tasks
+
+## Phase 12: Environment Upgrade (Infrastructure)
+
+**Goal**: Upgrade Docusaurus from 2.0.0-beta.6 to 3.x, React from 17 to 18, and Node.js to 18.0+, while preserving all existing content unchanged
+
+**Independent Test**: All chapters render correctly, search works, navigation functions, and deployment succeeds with zero regressions
+
+**Related Requirements**: ENV-001 through ENV-009 from spec.md
+
+### Pre-Upgrade Audit (ENV-008, ENV-009)
+
+- [ ] T107 [P] Document current package versions in textbook/package.json
+- [ ] T108 [P] Identify all Docusaurus plugins currently in use in textbook/docusaurus.config.js
+- [ ] T109 Create Git checkpoint/tag for current working state
+- [ ] T110 [P] Verify all content files in textbook/docs/ are committed to Git
+- [ ] T111 [P] Create backup/snapshot of current working directory
+- [ ] T112 Run baseline validation tests and document results
+
+**Checkpoint**: Pre-upgrade audit complete, backup created, baseline established
+
+### Dependency Upgrade (ENV-001, ENV-002, ENV-003)
+
+- [ ] T113 Verify Node.js version 18.0+ is installed in development environment
+- [ ] T114 Update textbook/package.json with Docusaurus 3.x core packages (@docusaurus/core, @docusaurus/preset-classic)
+- [ ] T115 Update textbook/package.json with React 18 and React-DOM 18
+- [ ] T116 Run npm install and resolve dependency tree
+- [ ] T117 Address any peer dependency conflicts or warnings
+- [ ] T118 Update any Docusaurus plugins to 3.x-compatible versions
+- [ ] T119 Document all dependency version changes in upgrade log
+
+**Checkpoint**: All dependencies upgraded, npm install succeeds without errors
+
+### Configuration Migration (ENV-007)
+
+- [ ] T120 Review Docusaurus v3 migration guide for breaking changes
+- [ ] T121 Update textbook/docusaurus.config.js syntax for v3 compatibility
+- [ ] T122 Migrate plugin configurations to v3 API in textbook/docusaurus.config.js
+- [ ] T123 Update theme configuration if necessary in textbook/docusaurus.config.js
+- [ ] T124 Update sidebar configuration for v3 compatibility in textbook/sidebar.js or textbook/sidebars.js
+- [ ] T125 [P] Update build scripts in textbook/package.json if needed
+- [ ] T126 [P] Update deployment configuration for GitHub Pages compatibility
+
+**Checkpoint**: Configuration migrated to Docusaurus 3.x syntax
+
+### Search Plugin Re-enablement (ENV-006)
+
+- [ ] T127 Research Docusaurus 3.x-compatible search plugins (local search vs Algolia)
+- [ ] T128 Install recommended search plugin (@easyops-cn/docusaurus-search-local or @docusaurus/theme-search-algolia)
+- [ ] T129 Configure search plugin in textbook/docusaurus.config.js
+- [ ] T130 Test search functionality with sample queries
+- [ ] T131 Verify search result highlighting and ranking work correctly
+- [ ] T132 Test search across all 4 chapters and content types
+
+**Checkpoint**: Search plugin operational with full functionality
+
+### Build Validation (ENV-008, ENV-009)
+
+- [ ] T133 Run npm run build in textbook/ directory and verify exit code 0
+- [ ] T134 Verify build completes with zero errors and zero warnings
+- [ ] T135 Run npm start (local dev server) and verify site loads correctly
+- [ ] T136 Test all 4 chapters render correctly without errors
+- [ ] T137 [P] Test navigation (breadcrumbs, next/previous, table of contents) functions correctly
+- [ ] T138 [P] Test search functionality with result highlighting
+- [ ] T139 [P] Verify visual materials (images, diagrams) load and display properly
+- [ ] T140 [P] Verify code examples render with proper syntax highlighting
+- [ ] T141 Test mobile responsiveness and accessibility features
+
+**Checkpoint**: Local build and testing successful, zero regressions detected
+
+### Content Preservation Validation (ENV-004, ENV-005)
+
+- [ ] T142 Compare content file checksums pre-upgrade vs post-upgrade
+- [ ] T143 Verify all MD/MDX files in textbook/docs/ are byte-for-byte identical
+- [ ] T144 Verify all images in textbook/docs/assets/ are unchanged
+- [ ] T145 Verify all code examples render identically to pre-upgrade
+- [ ] T146 Verify no accidental content modifications occurred
+- [ ] T147 Document validation results and confirm zero content changes
+
+**Checkpoint**: Content preservation validated, zero content modifications
+
+### Deployment Validation (ENV-008)
+
+- [ ] T148 Deploy to GitHub Pages test/staging environment
+- [ ] T149 Verify production build functions correctly in deployed environment
+- [ ] T150 Test deployed site loads and renders all chapters correctly
+- [ ] T151 [P] Test navigation in deployed environment
+- [ ] T152 [P] Test search functionality in deployed environment
+- [ ] T153 [P] Test all links and assets load correctly from CDN
+- [ ] T154 Run full validation test suite (ENV-008 criteria) against deployed site
+- [ ] T155 Verify deployment succeeds without errors or warnings
+
+**Checkpoint**: Deployment successful, production environment validated
+
+### Documentation and Rollback Plan (ENV-009)
+
+- [ ] T156 [P] Document all configuration changes made during upgrade
+- [ ] T157 [P] Document Node.js version requirement (18.0+) in project README
+- [ ] T158 [P] Update CI/CD pipeline configuration with Node.js 18.x
+- [ ] T159 [P] Update GitHub Actions workflows if applicable
+- [ ] T160 Create rollback instructions documenting revert steps
+- [ ] T161 Test rollback procedure to ensure it works
+- [ ] T162 Create upgrade completion report with validation results
+
+**Checkpoint**: Environment upgrade complete, documented, and validated
+
+---
 
 ## Parallel Execution Examples
 
@@ -265,6 +380,10 @@ This document contains implementation tasks for creating a modular, highly struc
 - **Examples/Exercises**: T049-T057 can be developed in parallel with chapter creation
 - **Edge Cases**: T087-T093 can be executed in parallel once base chapters exist
 - **Search Implementation**: T021-T021c can run parallel to early chapter development
+- **Environment Upgrade - Pre-Audit**: T107, T108, T110, T111 can run in parallel
+- **Environment Upgrade - Build Validation**: T137-T141 can run in parallel after T136 completes
+- **Environment Upgrade - Deployment Testing**: T151-T153 can run in parallel after T150 completes
+- **Environment Upgrade - Documentation**: T156-T159 can run in parallel
 
 ## Lineage Traceability
 
@@ -272,11 +391,35 @@ This document contains implementation tasks for creating a modular, highly struc
   - US1-US5: User stories (T019-T066)
   - FR-001 to FR-009: Core functional requirements (all phases)
   - FR-010 to FR-013: Edge case requirements (T087-T093)
+  - ENV-001 to ENV-009: Environment upgrade requirements (T107-T162)
+    - ENV-001: Docusaurus upgrade (T114, T118, T121-T124)
+    - ENV-002: React upgrade (T115)
+    - ENV-003: Node.js requirement (T113, T157-T159)
+    - ENV-004: Content preservation (T142-T147)
+    - ENV-005: No content regeneration (T143, T146)
+    - ENV-006: Search plugin re-enablement (T127-T132)
+    - ENV-007: Upgrade scope constraints (T120-T126, T156)
+    - ENV-008: Post-upgrade validation (T133-T155)
+    - ENV-009: Build success criteria (T133-T134, T162)
   - Edge Cases: Addressed in Phase 10 (T087-T093)
 - **Plan Link**: All tasks implement technical decisions from plan.md
   - Chapter structure: Overview → Concepts → Examples → Code → Exercises
   - Search: Docusaurus built-in with algolia/local plugin
   - PDF: docusaurus-prince-pdf or plugin-content-docs
+  - Environment Upgrade Strategy: 6-phase approach (T107-T162)
+    - Pre-Upgrade Audit (T107-T112)
+    - Dependency Upgrade (T113-T119)
+    - Configuration Migration (T120-T126)
+    - Search Plugin Re-enablement (T127-T132)
+    - Build & Content Validation (T133-T147)
+    - Deployment & Documentation (T148-T162)
+- **Research Link**: All upgrade tasks implement decisions from research.md
+  - Docusaurus 3.x upgrade decision (T114, T118, T120-T124)
+  - React 18 upgrade decision (T115)
+  - Node.js 18+ requirement (T113, T157-T159)
+  - Local Search Plugin recommendation (T127-T132)
+  - Content preservation strategy (T142-T147)
+  - Rollback and risk mitigation (T107-T112, T160-T161)
 - **Data Model Link**: All content tasks follow entity definitions from data-model.md
   - Chapter entity: 3-5 learning outcomes, 2-4 examples, 3-5 diagrams, 2-3 code examples, 3-5 exercises
   - Content verification states: draft → review → approved → published
@@ -284,4 +427,4 @@ This document contains implementation tasks for creating a modular, highly struc
   - Educational Excellence: Technical accuracy reviews (T036, T047, T075, T085, T101)
   - Modular Structure: Each chapter follows 5-file structure (index, concepts, examples, code, exercises)
   - Spec-Driven: Compatibility validation (T099)
-  - Docusaurus-Optimized: All content in MDX format
+  - Docusaurus-Optimized: All content in MDX format (preserved in upgrade T142-T147)
