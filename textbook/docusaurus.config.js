@@ -64,6 +64,23 @@ const config = {
   ],
   plugins: [
     // './src/plugins/offline-reading', // Disabled to fix click overlay issue
+    function (context, options) {
+      return {
+        name: 'custom-webpack-config',
+        configureWebpack(config, isServer) {
+          const webpack = require('webpack');
+          return {
+            plugins: [
+              new webpack.DefinePlugin({
+                'process.env.REACT_APP_CHATBOT_API_URL': JSON.stringify(
+                  process.env.REACT_APP_CHATBOT_API_URL || 'http://localhost:8000'
+                ),
+              }),
+            ],
+          };
+        },
+      };
+    },
   ],
 
   themeConfig:
