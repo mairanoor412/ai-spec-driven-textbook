@@ -1,0 +1,503 @@
+openapi: 3.0.3
+info:
+  title: RAG Chatbot API
+  description: |
+    Backend API for the Integrated RAG Chatbot feature in the AI/Spec-Driven Physical AI & Humanoid Robotics textbook.
+
+    This API provides endpoints for:
+    - Submitting queries to the chatbot
+    - Handling text-selection-based queries
+    - Health checks and service status
+
+    **Rate Limiting**: 10 queries per minute per session
+    **Authentication**: Publicly accessible (no auth required)
+  version: 1.0.0
+  contact:
+    name: Humanoid Robotics Team
+    url: https://mairanoor412.github.io/ai-spec-driven-textbook/
+
+servers:
+  - url: https://rag-chatbot-backend.onrender.com
+    description: Production server (Render Free Tier)
+  - url: http://localhost:8000
+    description: Local development server
+
+tags:
+  - name: Query
+    description: Query submission and response generation
+  - name: Health
+    description: Service health and status checks
+
+paths:
+  /query:
+    post:
+      tags:
+        - Query
+      summary: Submit a query to the chatbot
+      description: |
+        Submit a question to the RAG chatbot. The chatbot will:
+        1. Generate an embedding for the query
+        2. Perform vector search in Qdrant
+        3. Retrieve relevant textbook passages
+        4. Generate a grounded response using Gemini LLM
+        5. Include source citations
+
+        **Rate Limit**: 10 requests per minute per session.
+        **Streaming**: Response is streamed via Server-Sent Events (SSE).
+      operationId: submitQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+            examples:
+              basic_query:
+                summary: Basic question
+                value:
+                  session_id: "123e4567-e89b-12d3-a456-426614174000"
+                  question: "What is inverse kinematics?"
+                  selected_text: null
+                  conversation_history: []
+              followup_query:
+                summary: Follow-up question with context
+                value:
+                  session_id: "123e4567-e89b-12d3-a456-426614174000"
+                  question: "Can you explain that in simpler terms?"
+                  selected_text: null
+                  conversation_history:
+                    - role: "user"
+                      content: "What is inverse kinematics?"
+                      timestamp: "2025-12-15T14:30:00Z"
+                    - role: "assistant"
+                      content: "Inverse kinematics (IK) is the process..."
+                      timestamp: "2025-12-15T14:30:02Z"
+      responses:
+        '200':
+          description: Successful query processing (SSE stream)
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/StreamResponse'
+              examples:
+                stream_example:
+                  summary: SSE stream with chunks and citations
+                  value: |
+                    event: chunk
+                    data: {"type": "chunk", "content": "Inverse kinematics"}
+
+                    event: chunk
+                    data: {"type": "chunk", "content": " (IK) is the process"}
+
+                    event: citation
+                    data: {"type": "citation", "citation": {"text": "Chapter 3, Section 2", "url": "/docs/chapter-3/inverse-kinematics"}}
+
+                    event: done
+                    data: {"type": "done", "generation_time_ms": 2450}
+        '400':
+          description: Invalid request (e.g., question too long, missing session_id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid request"
+                detail: "Question exceeds maximum length of 2000 characters"
+                code: "INVALID_INPUT"
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+              example:
+                error: "Rate limit exceeded"
+                detail: "You have exceeded 10 queries per minute. Wait 15 seconds."
+                code: "RATE_LIMIT"
+                retry_after_seconds: 15
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Internal server error"
+                detail: "Failed to connect to vector database"
+                code: "SERVICE_UNAVAILABLE"
+
+  /query-selection:
+    post:
+      tags:
+        - Query
+      summary: Submit a query with selected text context
+      description: |
+        Submit a question about user-selected text from the textbook. The selected text
+        will be prioritized in the RAG pipeline for more focused answers.
+
+        **Use Case**: User highlights a paragraph and asks "Explain this in simpler terms".
+        **Rate Limit**: 10 requests per minute per session (shared with /query).
+      operationId: submitSelectionQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectionQueryRequest'
+            example:
+              session_id: "123e4567-e89b-12d3-a456-426614174000"
+              question: "Can you explain this sensor fusion approach in simpler terms?"
+              selected_text: "Sensor fusion combines data from multiple sensors using Kalman filtering to estimate robot state with higher accuracy than individual sensors..."
+              conversation_history: []
+      responses:
+        '200':
+          description: Successful query processing (SSE stream)
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/StreamResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      description: |
+        Check the health status of the backend service and its dependencies.
+        Returns the status of:
+        - API server
+        - Qdrant vector database connection
+        - Embedding service (Cohere) availability
+        - LLM service (Gemini) availability
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "healthy"
+                timestamp: "2025-12-15T14:30:00Z"
+                services:
+                  qdrant: "connected"
+                  embedding_service: "available"
+                  llm_service: "available"
+                version: "1.0.0"
+        '503':
+          description: Service is unhealthy or degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "degraded"
+                timestamp: "2025-12-15T14:30:00Z"
+                services:
+                  qdrant: "disconnected"
+                  embedding_service: "available"
+                  llm_service: "available"
+                version: "1.0.0"
+
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      required:
+        - session_id
+        - question
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          description: UUID v4 session identifier
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        question:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: User's question
+          example: "What is inverse kinematics?"
+        selected_text:
+          type: string
+          nullable: true
+          maxLength: 5000
+          description: Optional selected text context (null for general queries)
+          example: null
+        conversation_history:
+          type: array
+          maxItems: 10
+          description: Previous messages in the conversation (max 10 for context)
+          items:
+            $ref: '#/components/schemas/Message'
+          example: []
+
+    SelectionQueryRequest:
+      type: object
+      required:
+        - session_id
+        - question
+        - selected_text
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          description: UUID v4 session identifier
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        question:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: User's question about the selected text
+          example: "Can you explain this in simpler terms?"
+        selected_text:
+          type: string
+          minLength: 1
+          maxLength: 5000
+          description: Text selected by the user
+          example: "Inverse kinematics (IK) is the process of determining joint angles..."
+        conversation_history:
+          type: array
+          maxItems: 10
+          description: Previous messages in the conversation
+          items:
+            $ref: '#/components/schemas/Message'
+          example: []
+
+    Message:
+      type: object
+      required:
+        - role
+        - content
+        - timestamp
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+          description: Message sender
+          example: "user"
+        content:
+          type: string
+          minLength: 1
+          description: Message content
+          example: "What is inverse kinematics?"
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp
+          example: "2025-12-15T14:30:00Z"
+
+    StreamResponse:
+      type: object
+      description: |
+        Server-Sent Events (SSE) stream. Each event is one of:
+        - `chunk`: Partial response text
+        - `citation`: Source citation
+        - `done`: Stream complete with metadata
+      oneOf:
+        - $ref: '#/components/schemas/ChunkEvent'
+        - $ref: '#/components/schemas/CitationEvent'
+        - $ref: '#/components/schemas/DoneEvent'
+
+    ChunkEvent:
+      type: object
+      required:
+        - type
+        - content
+      properties:
+        type:
+          type: string
+          enum: [chunk]
+          example: "chunk"
+        content:
+          type: string
+          description: Partial response text
+          example: "Inverse kinematics"
+
+    CitationEvent:
+      type: object
+      required:
+        - type
+        - citation
+      properties:
+        type:
+          type: string
+          enum: [citation]
+          example: "citation"
+        citation:
+          $ref: '#/components/schemas/Citation'
+
+    DoneEvent:
+      type: object
+      required:
+        - type
+        - generation_time_ms
+      properties:
+        type:
+          type: string
+          enum: [done]
+          example: "done"
+        generation_time_ms:
+          type: integer
+          minimum: 0
+          description: Total time taken to generate the response
+          example: 2450
+
+    Citation:
+      type: object
+      required:
+        - citation_id
+        - text
+        - url
+        - chapter
+        - chapter_number
+      properties:
+        citation_id:
+          type: string
+          format: uuid
+          description: Unique citation identifier
+          example: "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6"
+        text:
+          type: string
+          description: Display text for the citation
+          example: "Chapter 3, Section 2"
+        url:
+          type: string
+          format: uri-reference
+          description: Relative URL to the textbook section
+          example: "/docs/chapter-3/inverse-kinematics#analytical-ik-solutions"
+        chapter:
+          type: string
+          description: Chapter title
+          example: "Chapter 3: Kinematics"
+        chapter_number:
+          type: integer
+          minimum: 1
+          description: Numeric chapter identifier
+          example: 3
+        section:
+          type: string
+          nullable: true
+          description: Section title (if applicable)
+          example: "Section 2: Inverse Kinematics"
+        section_number:
+          type: integer
+          nullable: true
+          minimum: 1
+          description: Numeric section identifier
+          example: 2
+        heading:
+          type: string
+          nullable: true
+          description: Subsection heading (if applicable)
+          example: "Analytical IK Solutions"
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - services
+        - version
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Overall service health
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+          description: Health check timestamp
+          example: "2025-12-15T14:30:00Z"
+        services:
+          type: object
+          description: Status of individual service dependencies
+          properties:
+            qdrant:
+              type: string
+              enum: [connected, disconnected]
+              example: "connected"
+            embedding_service:
+              type: string
+              enum: [available, unavailable]
+              example: "available"
+            llm_service:
+              type: string
+              enum: [available, unavailable]
+              example: "available"
+        version:
+          type: string
+          description: API version
+          example: "1.0.0"
+
+    Error:
+      type: object
+      required:
+        - error
+        - detail
+        - code
+      properties:
+        error:
+          type: string
+          description: Short error message
+          example: "Invalid request"
+        detail:
+          type: string
+          description: Detailed error explanation
+          example: "Question exceeds maximum length of 2000 characters"
+        code:
+          type: string
+          enum: [INVALID_INPUT, SERVICE_UNAVAILABLE, INTERNAL_ERROR]
+          description: Machine-readable error code
+          example: "INVALID_INPUT"
+
+    RateLimitError:
+      type: object
+      required:
+        - error
+        - detail
+        - code
+        - retry_after_seconds
+      properties:
+        error:
+          type: string
+          description: Short error message
+          example: "Rate limit exceeded"
+        detail:
+          type: string
+          description: Detailed error explanation
+          example: "You have exceeded 10 queries per minute. Wait 15 seconds."
+        code:
+          type: string
+          enum: [RATE_LIMIT]
+          description: Machine-readable error code
+          example: "RATE_LIMIT"
+        retry_after_seconds:
+          type: integer
+          minimum: 0
+          description: Seconds to wait before retrying
+          example: 15
+
+  securitySchemes: {}
+
+security: []

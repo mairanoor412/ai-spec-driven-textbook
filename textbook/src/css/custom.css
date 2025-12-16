@@ -24,6 +24,37 @@
 
   /* Accent color */
   --ifm-color-accent: #DC143C; /* Crimson */
+
+  /* Chatbot Widget - Glassmorphism Design System */
+  /* Backgrounds */
+  --chatbot-bg-primary: hsla(210, 25%, 98%, 0.75);      /* Soft white with blue tint */
+  --chatbot-bg-secondary: hsla(210, 20%, 96%, 0.85);    /* Slightly more opaque */
+
+  /* Borders */
+  --chatbot-border-soft: hsla(210, 15%, 85%, 0.5);      /* Subtle gray */
+  --chatbot-border-focus: hsla(230, 30%, 80%, 0.8);     /* Lavender (focus state) */
+
+  /* Accent Colors */
+  --chatbot-accent-primary: hsla(230, 30%, 85%, 1);     /* Soft lavender */
+  --chatbot-accent-secondary: hsla(210, 30%, 88%, 1);   /* Light blue */
+
+  /* Text */
+  --chatbot-text-primary: hsla(220, 15%, 25%, 1);       /* Muted dark blue-gray */
+  --chatbot-text-secondary: hsla(220, 10%, 45%, 1);     /* Medium gray */
+  --chatbot-text-tertiary: hsla(220, 8%, 65%, 1);       /* Light gray (timestamps) */
+
+  /* Chat Bubbles */
+  --chatbot-bubble-user: hsla(210, 30%, 90%, 0.9);      /* Light blue */
+  --chatbot-bubble-assistant: hsla(270, 20%, 92%, 0.9); /* Soft lavender */
+
+  /* States */
+  --chatbot-hover: hsla(230, 25%, 90%, 1);              /* Hover state */
+  --chatbot-active: hsla(230, 30%, 85%, 1);             /* Active/pressed */
+  --chatbot-disabled: hsla(220, 10%, 70%, 0.5);         /* Disabled */
+
+  /* Shadows */
+  --chatbot-shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.15);
+  --chatbot-shadow-medium: 0 4px 16px rgba(31, 38, 135, 0.2);
 }
 
 /* Mobile-friendly navigation */
@@ -434,4 +465,26 @@ html[data-theme='dark'] .docusaurus-highlight-code-line {
 .metrics-backdrop {
   pointer-events: none !important;
   z-index: -1 !important;
+}
+
+/* ===== Citation Navigation Highlight Effect ===== */
+/* Applied when user navigates to a section via citation link */
+.citation-highlight {
+  background-color: hsla(230, 30%, 85%, 0.3) !important;
+  border-left: 4px solid var(--chatbot-accent-primary, #b8b3d9);
+  padding-left: 12px;
+  transition: background-color 0.5s ease, border-color 0.5s ease;
+  animation: citationPulse 2s ease;
+}
+
+@keyframes citationPulse {
+  0% {
+    background-color: hsla(230, 30%, 85%, 0.5);
+  }
+  50% {
+    background-color: hsla(230, 30%, 85%, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
