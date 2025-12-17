@@ -25,36 +25,43 @@
   /* Accent color */
   --ifm-color-accent: #DC143C; /* Crimson */
 
-  /* Chatbot Widget - Glassmorphism Design System */
+  /* Chatbot Widget - Glassmorphism Design System - Teal/Green Brand Aligned */
   /* Backgrounds */
   --chatbot-bg-primary: hsla(210, 25%, 98%, 0.75);      /* Soft white with blue tint */
   --chatbot-bg-secondary: hsla(210, 20%, 96%, 0.85);    /* Slightly more opaque */
+  --chatbot-header-bg: hsla(160, 35%, 96%, 1);          /* Very light teal header */
+
+  /* Icon & Button Colors */
+  --chatbot-icon-bg: hsla(160, 50%, 48%, 1);            /* Teal background (#3CA888) */
+  --chatbot-icon-hover: hsla(160, 55%, 42%, 1);         /* Darker teal hover (#2D9871) */
 
   /* Borders */
-  --chatbot-border-soft: hsla(210, 15%, 85%, 0.5);      /* Subtle gray */
-  --chatbot-border-focus: hsla(230, 30%, 80%, 0.8);     /* Lavender (focus state) */
+  --chatbot-border: hsla(160, 20%, 88%, 1);             /* Subtle teal border (#D4E5DF) */
+  --chatbot-border-soft: hsla(210, 15%, 85%, 0.5);      /* Subtle gray (legacy) */
 
   /* Accent Colors */
-  --chatbot-accent-primary: hsla(230, 30%, 85%, 1);     /* Soft lavender */
-  --chatbot-accent-secondary: hsla(210, 30%, 88%, 1);   /* Light blue */
+  --chatbot-accent: hsla(160, 50%, 48%, 1);             /* Teal accent (#3CA888) */
+  --chatbot-accent-primary: hsla(160, 50%, 48%, 1);     /* Teal (replaces lavender) */
+  --chatbot-accent-secondary: hsla(210, 30%, 88%, 1);   /* Light blue (legacy) */
 
   /* Text */
-  --chatbot-text-primary: hsla(220, 15%, 25%, 1);       /* Muted dark blue-gray */
-  --chatbot-text-secondary: hsla(220, 10%, 45%, 1);     /* Medium gray */
+  --chatbot-text-primary: hsla(220, 15%, 22%, 1);       /* Dark gray (#2F3640) */
+  --chatbot-text-secondary: hsla(220, 10%, 52%, 1);     /* Medium gray (#78828C) */
   --chatbot-text-tertiary: hsla(220, 8%, 65%, 1);       /* Light gray (timestamps) */
 
   /* Chat Bubbles */
-  --chatbot-bubble-user: hsla(210, 30%, 90%, 0.9);      /* Light blue */
-  --chatbot-bubble-assistant: hsla(270, 20%, 92%, 0.9); /* Soft lavender */
+  --chatbot-bubble-user: hsla(210, 22%, 91%, 1);        /* Neutral gray-blue (#E5E9ED) */
+  --chatbot-bubble-ai: hsla(160, 35%, 94%, 1);          /* Soft mint green (#EAF6F2) */
+  --chatbot-bubble-assistant: hsla(160, 35%, 94%, 1);   /* Soft mint (replaces lavender) */
 
   /* States */
-  --chatbot-hover: hsla(230, 25%, 90%, 1);              /* Hover state */
-  --chatbot-active: hsla(230, 30%, 85%, 1);             /* Active/pressed */
+  --chatbot-hover: hsla(160, 40%, 90%, 1);              /* Teal hover state */
+  --chatbot-active: hsla(160, 45%, 85%, 1);             /* Teal active/pressed */
   --chatbot-disabled: hsla(220, 10%, 70%, 0.5);         /* Disabled */
 
   /* Shadows */
-  --chatbot-shadow-soft: 0 8px 32px rgba(31, 38, 135, 0.15);
-  --chatbot-shadow-medium: 0 4px 16px rgba(31, 38, 135, 0.2);
+  --chatbot-shadow-soft: 0 8px 32px rgba(60, 168, 136, 0.15);      /* Teal shadow */
+  --chatbot-shadow-medium: 0 4px 16px rgba(60, 168, 136, 0.2);     /* Teal shadow */
 }
 
 /* Mobile-friendly navigation */
