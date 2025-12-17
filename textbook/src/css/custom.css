@@ -28,8 +28,8 @@
   /* Chatbot Widget - Glassmorphism Design System - Teal/Green Brand Aligned */
   /* Backgrounds */
   --chatbot-bg-primary: hsla(210, 25%, 98%, 0.75);      /* Soft white with blue tint */
-  --chatbot-bg-secondary: hsla(210, 20%, 96%, 0.85);    /* Slightly more opaque */
-  --chatbot-header-bg: hsla(160, 35%, 96%, 1);          /* Very light teal header */
+  --chatbot-bg-secondary: hsla(160, 35%, 96%, 0.85);    /* Very light teal (header background) */
+  --chatbot-header-bg: hsla(160, 35%, 96%, 1);          /* Very light teal header (legacy, not used) */
 
   /* Icon & Button Colors */
   --chatbot-icon-bg: hsla(160, 50%, 48%, 1);            /* Teal background (#3CA888) */
@@ -394,6 +394,19 @@
 
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode chatbot colors */
+html[data-theme='dark'] {
+  --chatbot-bg-primary: hsla(160, 15%, 15%, 0.75);      /* Dark teal background */
+  --chatbot-bg-secondary: hsla(160, 20%, 20%, 0.85);    /* Darker teal header */
+  --chatbot-text-primary: hsla(0, 0%, 90%, 1);          /* Light gray text */
+  --chatbot-text-secondary: hsla(0, 0%, 70%, 1);        /* Medium gray text */
+  --chatbot-text-tertiary: hsla(0, 0%, 50%, 1);         /* Darker gray timestamps */
+  --chatbot-bubble-user: hsla(210, 20%, 25%, 0.9);      /* Dark blue-gray user bubble */
+  --chatbot-bubble-ai: hsla(160, 25%, 25%, 0.9);        /* Dark teal AI bubble */
+  --chatbot-bubble-assistant: hsla(160, 25%, 25%, 0.9); /* Dark teal assistant bubble */
+  --chatbot-border-soft: hsla(160, 15%, 30%, 0.5);      /* Darker teal border */
 }
 
 /* Offline status indicator */
