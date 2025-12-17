@@ -45,58 +45,134 @@
   }
 }
 
-/* ===== Trigger Button ===== */
+/* ===== Trigger Button & Tooltip ===== */
 
-.chatbotTrigger {
+.chatTriggerContainer {
   position: fixed;
   bottom: 24px;
   right: 24px;
+  z-index: 9998;
+}
+
+.chatTrigger {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  z-index: 9998;
 
-  /* Glassmorphism */
-  background: var(--chatbot-bg-secondary);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--chatbot-border-soft);
+  /* Teal brand background */
+  background: var(--chatbot-icon-bg);
 
-  box-shadow:
-    0 4px 16px rgba(31, 38, 135, 0.2),
-    0 2px 8px rgba(31, 38, 135, 0.1);
+  box-shadow: 0 4px 16px rgba(60, 168, 136, 0.2);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  transition: all 0.2s ease;
+  color: white;
+
+  /* Bounce easing for smooth animations */
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.2s ease-out,
+              background 0.2s ease-out;
 }
 
-.chatbotTrigger:hover {
-  transform: scale(1.05);
-  background: var(--chatbot-hover);
-  box-shadow:
-    0 6px 20px rgba(31, 38, 135, 0.25),
-    0 3px 10px rgba(31, 38, 135, 0.15);
+.chatTrigger:hover {
+  transform: scale(1.08);
+  background: var(--chatbot-icon-hover);
+  box-shadow: 0 12px 28px rgba(60, 168, 136, 0.25);
 }
 
-.chatbotTrigger:active {
-  transform: scale(0.95);
-  background: var(--chatbot-active);
+.chatTrigger:active {
+  transform: scale(0.92);
+  transition: transform 0.1s ease-in;
 }
 
-.chatbotTrigger:focus {
-  outline: 2px solid var(--chatbot-border-focus);
-  outline-offset: 2px;
+.chatTrigger:focus-visible {
+  outline: 3px solid var(--chatbot-accent);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px hsla(160, 50%, 48%, 0.2);
 }
 
+/* Tooltip styles */
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  padding: 8px 12px;
+  background: var(--chatbot-text-primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+
+  /* Hidden by default */
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  transition-delay: 0s;
+}
+
+.tooltipVisible {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.6s; /* 600ms delay before showing */
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: 100%;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-top-color: var(--chatbot-text-primary);
+}
+
+/* Mobile: Larger touch target, hide tooltip */
+@media (max-width: 767px) {
+  .chatTriggerContainer {
+    bottom: 32px;
+    right: 32px;
+  }
+
+  .chatTrigger {
+    width: 64px;
+    height: 64px;
+  }
+
+  .tooltip {
+    display: none; /* Hide tooltip on mobile */
+  }
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .chatTrigger,
+  .tooltip,
+  .message,
+  .selectionButton,
+  .loadingDot {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .chatTrigger:hover,
+  .sendButton:hover,
+  .selectionButton:hover {
+    transform: none !important; /* No scale/translate animations */
+  }
+}
+
+/* Legacy icon class for backwards compatibility */
 .chatbotTriggerIcon {
   width: 28px;
   height: 28px;
-  color: var(--chatbot-text-primary);
+  color: white;
 }
 
 /* Backward compatibility */
