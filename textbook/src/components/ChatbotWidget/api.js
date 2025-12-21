@@ -2,7 +2,7 @@
  * API client for chatbot backend with SSE streaming support
  */
 
-const API_BASE_URL = "https://ai-spec-driven-textbook-production.up.railway.app";
+const API_BASE_URL = "https://ai-spec-driven-textbook-production.up.railway.app"; 
 
 /**
  * Query the chatbot with SSE streaming
